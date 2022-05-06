@@ -28,15 +28,14 @@ import java.util.List;
 
 public class PlaceFragment extends Fragment {
     private static PlaceViewModel viewModel;
-    public PlaceViewModel getViewModel(){
+    public PlaceViewModel getViewModel() {
         return viewModel;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        viewModel=new ViewModelProvider(this).get(PlaceViewModel.class);
-        return inflater.inflate(R.layout.fragment_place,container,false);
-
+        viewModel = new ViewModelProvider(this).get(PlaceViewModel.class);
+        return inflater.inflate(R.layout.fragment_place, container, false);
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -44,19 +43,19 @@ public class PlaceFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 
-        LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
-        RecyclerView recyclerView=getActivity().findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView recyclerView = getActivity().findViewById(R.id.recyclerView);
         //设置LayoutManager
         recyclerView.setLayoutManager(layoutManager);
 
-        PlaceAdapter adapter=new PlaceAdapter(this,viewModel.getPlaceList());
+        PlaceAdapter adapter = new PlaceAdapter(this, viewModel.getPlaceList());
         //设置适配器
         recyclerView.setAdapter(adapter);
 
         ImageView bgImageView;
-        bgImageView=getActivity().findViewById(R.id.bgImageView);
+        bgImageView = getActivity().findViewById(R.id.bgImageView);
 
-        EditText searchPlaceEdit=getActivity().findViewById(R.id.searchPlaceEdit);
+        EditText searchPlaceEdit = getActivity().findViewById(R.id.searchPlaceEdit);
         //监听搜索框内部变化情况
         searchPlaceEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -66,14 +65,14 @@ public class PlaceFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String content=s.toString();
-                Log.d("PlaceFragment","query is"+content);
-                if(content.isEmpty()){
+                String content = s.toString();
+                Log.d("PlaceFragment", "query is" + content);
+                if(content.isEmpty()) {
                     recyclerView.setVisibility(View.GONE);
                     bgImageView.setVisibility(View.VISIBLE);
                     viewModel.listClear();
                     adapter.notifyDataSetChanged();
-                }else{
+                } else {
                     viewModel.searchPlace(content);
                     Log.d("PlaceFragment",""+viewModel.placeLiveData.getValue());
                 }
@@ -88,16 +87,16 @@ public class PlaceFragment extends Fragment {
         viewModel.placeLiveData.observe(getViewLifecycleOwner(), new Observer<List<PlaceResponse.Place>>() {
             @Override
             public void onChanged(List<PlaceResponse.Place> placeList) {
-                if(placeList!=null){
+                if(placeList != null) {
                     Log.d("PlaceFragment","数据已变化");
                     recyclerView.setVisibility(View.VISIBLE);
                     bgImageView.setVisibility(View.GONE);
                     viewModel.listClear();
                     viewModel.addAllList(placeList);
                     adapter.notifyDataSetChanged();
-                }else{
+                } else {
                     Log.d("PlaceFragment","数据空");
-                    Toast.makeText(getActivity(),"未能查询到任何地点",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "未能查询到任何地点", Toast.LENGTH_LONG).show();
                 }
             }
         });
